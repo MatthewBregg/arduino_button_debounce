@@ -22,13 +22,13 @@ void BasicDebounce::update() {
        if ( reading && !_has_true) {
 	   //Button is depressed
 	   if ( _button_pressed_command ) {
-	       (*_button_pressed_command)();
+	       (*_button_pressed_command)(this);
 	   }
         _has_true = true;
        } else if (!reading) {
           _has_true = false;
 	  if ( _button_released_command ) {
-	      (*_button_released_command)();
+	      (*_button_released_command)(this);
 	  }
        }
   }

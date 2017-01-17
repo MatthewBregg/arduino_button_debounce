@@ -9,7 +9,7 @@ class BasicDebounce {
     //Assumes a button is low when it is pressed/acitivated/true.
     // Considering pressed to be "true"
 public:
-    using Command = void (*)();
+    using Command = void (*)(BasicDebounce*);
     BasicDebounce(const uint8_t pin_number, const unsigned int delay_ms, const uint8_t true_on = LOW);
     void update();
 
@@ -47,8 +47,8 @@ private:
     bool _current_state = false;
     const uint8_t _pin_number;
     const unsigned int _delay_ms;
-    void  (*_button_pressed_command)() = 0;
-    void (*_button_released_command)() = 0;
+    Command  _button_pressed_command = 0;
+    Command _button_released_command = 0;
 
 };
 
