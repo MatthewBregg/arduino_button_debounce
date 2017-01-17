@@ -1,0 +1,5 @@
+BasicDebounce KEYWORD1
+update KEYWORD2
+set_button_pressed_callback KEYWORD2
+set_button_released_callback KEYWORD2
+query KEYWORD2
