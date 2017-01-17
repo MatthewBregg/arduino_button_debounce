@@ -9,7 +9,7 @@ void BasicDebounce::update() {
   int val = digitalRead(_pin_number);
   bool reading = (val == _true_on);
 
-  if (reading != _last_state_debounce) {
+  if (reading != _current_state) {
     // reset the debouncing timer
     _last_change_time = millis();
   }
@@ -21,28 +21,36 @@ void BasicDebounce::update() {
 
        if ( reading && !_has_true) {
 	   //Button is depressed
-	   if ( _button_pressed_callback ) {
-	       (*_button_pressed_callback)();
+	   if ( _button_pressed_command ) {
+	       (*_button_pressed_command)();
 	   }
         _has_true = true;
        } else if (!reading) {
           _has_true = false;
-	  if ( _button_released_callback ) {
-	      (*_button_released_callback)();
+	  if ( _button_released_command ) {
+	      (*_button_released_command)();
 	  }
        }
   }
-  _last_state_debounce = reading;
+  _current_state = reading;
 }
 
-bool BasicDebounce::set_button_pressed_callback(void (*callback)()) {
-    bool existed = _button_pressed_callback;
-    _button_pressed_callback = callback;
+bool BasicDebounce::set_pressed_command(Command command) {
+    bool existed = _button_pressed_command;
+    _button_pressed_command = command;
     return existed;
 }
 
-bool BasicDebounce::set_button_released_callback(void (*callback)()) {
-    bool existed = _button_released_callback;
-    _button_released_callback = callback;
+bool BasicDebounce::set_released_command(Command command) {
+    bool existed = _button_released_command;
+    _button_released_command = command;
     return existed;
+}
+
+bool BasicDebounce::set_button_pressed_callback(Command command) {
+    return this->set_pressed_command(command);
+}
+
+bool BasicDebounce::set_button_released_callback(Command command) {
+    return this->set_released_command(command);
 }
