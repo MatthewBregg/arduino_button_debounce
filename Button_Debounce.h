@@ -13,9 +13,13 @@ public:
     void update();
     // For both of these, return if we had some value set for these prior.
     bool set_button_pressed_callback(void (*callback)());
+    // Todo, add a second one of these with a long parameter for how long the
+    // button was held down for.
     bool set_button_released_callback(void (*callback)());
 
     //True if the debounced reading is considered to be true.
+    // TODO return how long the reading has been true for.
+    // Which will then be implicitly converted into a bool if that's what is desired.
     bool query() {
 	return _has_true;
     }
