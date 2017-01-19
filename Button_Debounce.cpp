@@ -27,7 +27,7 @@ void BasicDebounce::update() {
 	       (*_button_pressed_command)(this);
 	   }
 	   _entered_state_time = millis();
-       } else if (!reading) {
+       } else if (!reading && _has_true) {
           _has_true = false;
 	  if ( _button_released_command ) {
 	      (*_button_released_command)(this);
