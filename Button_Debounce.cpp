@@ -2,40 +2,41 @@
 
 BasicDebounce::BasicDebounce(const uint8_t pin_number,
 			     const unsigned int delay_ms,
-			     const uint8_t  true_on):
-    _pin_number(pin_number),_delay_ms(delay_ms),_true_on(true_on) {
+			     const uint8_t  true_on,
+			     const SetUpPinCommand setUpPinCommand):_true_on(true_on) {
+    (*setUpPinCommand)(pin_number);
+    _bouncer.attach(pin_number);
+    _bouncer.interval(delay_ms);
 }
 
 void BasicDebounce::update() {
-  int val = digitalRead(_pin_number);
-  bool reading = (val == _true_on);
+    _bouncer.update();
 
-  if (reading != _current_state) {
-    // reset the debouncing timer
-    _last_change_time = millis();
-  }
+    if ( _bouncer.rose() ) {
+	if ( _true_on ) {
+	    if (_button_pressed_command) {
+		(*_button_pressed_command)(this);
+	    }
+	} else {
+	    if (_button_released_command) {
+		(*_button_released_command)(this);
+	    }
+	}
+	_entered_state_time = millis();
+    }
 
-  if ((millis() - _last_change_time) > _delay_ms) {
-
-    // whatever the reading is at, it's been there for longer
-    // than the debounce delay, so take it as the actual current state:
-
-       if ( reading && !_has_true) {
-	   //Button is depressed
-	   _has_true = true;
-	   if ( _button_pressed_command ) {
-	       (*_button_pressed_command)(this);
-	   }
-	   _entered_state_time = millis();
-       } else if (!reading) {
-          _has_true = false;
-	  if ( _button_released_command ) {
-	      (*_button_released_command)(this);
-	  }
-	   _entered_state_time = millis();
-       }
-  }
-  _current_state = reading;
+    if ( _bouncer.fell() ) {
+	if ( _true_on ) {
+	    if (_button_released_command) {
+		(*_button_released_command)(this);
+	    }
+	} else {
+	    if (_button_pressed_command) {
+		(*_button_pressed_command)(this);
+	    }
+	}
+	_entered_state_time = millis();
+    }
 }
 
 bool BasicDebounce::set_pressed_command(Command command) {

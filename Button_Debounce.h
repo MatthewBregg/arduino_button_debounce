@@ -1,17 +1,27 @@
 #ifndef BUTTON_DEBOUNCE_H
 #define BUTTON_DEBOUNCE_H
 #include "Arduino.h"
+#include <Bounce2.h>
 
 
 class BasicDebounce {
-    //If std function takes up too much resources, can switch to function pointers.
-    //Assumes a button is low when it is pressed/acitivated/true.
-    // Considering pressed to be "true"
+
 public:
     using Command = void (*)(BasicDebounce*);
+    using SetUpPinCommand = void (*)(int);
+
+private:
+    static void InitPinToPullUp(int pin) {
+        // Setup the button
+        pinMode( pin,INPUT_PULLUP);
+    }
+public:
     BasicDebounce(const uint8_t pin_number,
 		  const unsigned int delay_ms,
-		  const uint8_t true_on = LOW);
+		  const uint8_t true_on = LOW,
+                  const SetUpPinCommand setUpPinCommand = InitPinToPullUp);
+
+
     void update();
 
     // For both of these, return if we had some value set for these prior.
@@ -24,13 +34,7 @@ public:
     // While the commands implicitly give you this info, and are happen onstate edges
     // it should be valid to call this during a command.
     bool query() {
-	return _has_true;
-    }
-
-    // How long the button has been in it's current state for.
-    // Decided to make these into two separate functions than overloading query
-    long time_in_current_state() {
-        return millis() - _last_change_time;
+	return _bouncer.read() == _true_on;
     }
 
     // How long we have been in our current state
@@ -59,19 +63,11 @@ public:
 private:
     // This tells you when we entered the current state at
     unsigned long _entered_state_time = 0;
-    // The last time the button reading changed, raw
-    unsigned long _last_change_time = 0;
     // What int reading counts as true
     const uint8_t  _true_on;
-    // A debounced state of if the button is currently reading true
-    bool _has_true = false;
-    // A raw, bouncy state of if the button is readly reading true
-    bool _current_state = false;
-    // Pin number of the button
-    const uint8_t _pin_number;
-    // How long a button must stay in a position to be seen as true
-    const unsigned int _delay_ms;
-    // The two commands to run when a button is pressed or released
+
+    Bounce _bouncer;
+    Bounce* _bouncer2;
     Command  _button_pressed_command = 0;
     Command _button_released_command = 0;
 
