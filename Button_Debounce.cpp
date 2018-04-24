@@ -44,7 +44,6 @@ void BasicDebounce::handle_fell_command() {
 }
 
 void BasicDebounce::update() {
-<<<<<<< HEAD
     _bouncer.update();
 
     if ( _bouncer2 ) {
@@ -77,37 +76,6 @@ void BasicDebounce::update() {
 	}
     }
 
-=======
-  int val = digitalRead(_pin_number);
-  bool reading = (val == _true_on);
-
-  if (reading != _current_state) {
-    // reset the debouncing timer
-    _last_change_time = millis();
-  }
-
-  if ((millis() - _last_change_time) > _delay_ms) {
-
-    // whatever the reading is at, it's been there for longer
-    // than the debounce delay, so take it as the actual current state:
-
-       if ( reading && !_has_true) {
-	   //Button is depressed
-	   _has_true = true;
-	   if ( _button_pressed_command ) {
-	       (*_button_pressed_command)(this);
-	   }
-	   _entered_state_time = millis();
-       } else if (!reading && _has_true) {
-          _has_true = false;
-	  if ( _button_released_command ) {
-	      (*_button_released_command)(this);
-	  }
-	   _entered_state_time = millis();
-       }
-  }
-  _current_state = reading;
->>>>>>> cf5b48b11b7ed06f2767e3f6bd3d20135429ef0c
 }
 
 bool BasicDebounce::set_pressed_command(Command command) {
