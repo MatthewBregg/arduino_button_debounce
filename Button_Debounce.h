@@ -17,9 +17,11 @@ private:
     }
 public:
     BasicDebounce(const uint8_t pin_number,
-		  const unsigned int delay_ms,
+		  const byte delay_ms,
 		  const uint8_t true_on = LOW,
                   const SetUpPinCommand setUpPinCommand = InitPinToPullUp);
+
+    void AddSecondaryPin(const int8_t pin_number, const SetUpPinCommand setUpPinCommand = InitPinToPullUp);
 
 
     void update();
@@ -65,11 +67,15 @@ private:
     unsigned long _entered_state_time = 0;
     // What int reading counts as true
     const uint8_t  _true_on;
+    const byte _delay_ms;
 
     Bounce _bouncer;
-    Bounce* _bouncer2;
+    Bounce* _bouncer2 = nullptr;
     Command  _button_pressed_command = 0;
     Command _button_released_command = 0;
+
+    void handle_rose_command();
+    void handle_fell_command();
 
 };
 
