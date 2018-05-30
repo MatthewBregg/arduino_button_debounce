@@ -36,7 +36,11 @@ public:
     // While the commands implicitly give you this info, and are happen onstate edges
     // it should be valid to call this during a command.
     bool query() {
-	return _bouncer.read() == _true_on;
+	if (_bouncer2) {
+            return (_bouncer.read() == _true_on) && (_bouncer2->read() != _true_on);
+        } else {
+            return _bouncer.read() == _true_on;
+        }
     }
 
     // How long we have been in our current state

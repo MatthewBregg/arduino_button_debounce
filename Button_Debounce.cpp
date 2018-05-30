@@ -45,6 +45,9 @@ void BasicDebounce::handle_fell_command() {
 
 void BasicDebounce::update() {
     _bouncer.update();
+    if(_bouncer2) {
+	_bouncer2->update();
+    }
 
     if ( _bouncer2 ) {
 
